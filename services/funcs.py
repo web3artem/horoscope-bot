@@ -24,3 +24,11 @@ def validate_birthdate(birthdate: str):
         return True
     except ValueError:
         return False
+
+
+def validate_time(time: str):
+    try:
+        datetime.strptime(time, '%H:%M')
+        return True
+    except ValueError:
+        return False
