@@ -3,11 +3,11 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from create_bot import dp
+from loader import dp
+from data.config import ADMINS
+
 
 # Здесь необходимо ввести айдишник для доступа к админке. Получить можно в тг боте https://t.me/getmyid_bot
-ADMIN_ID = 6083753042
-
 
 class FSMAdmin(StatesGroup):
     photo = State()
@@ -17,7 +17,7 @@ class FSMAdmin(StatesGroup):
 # Начало диалога загрузки нового поста
 # @dp.message_handler(commands='Загрузить пост', state=None)
 async def cm_start(message: types.Message):
-    if message.from_user.id == ADMIN_ID:
+    if message.from_user.id in ADMINS:
         await FSMAdmin.photo.set()
         await message.answer('Отправьте фото поста')
     else:
@@ -27,7 +27,7 @@ async def cm_start(message: types.Message):
 # Ловим первый ответ и пишем в словарь
 # @dp.message_handler(content_types=['photo'], state=FSMAdmin.description)
 async def load_photo(message: types.Message, state: FSMContext):
-    if message.from_user.id == ADMIN_ID:
+    if message.from_user.id in ADMINS:
         async with state.proxy() as data:
             data['photo'] = message.photo[0].file_id
             await FSMAdmin.next()
@@ -39,7 +39,7 @@ async def load_photo(message: types.Message, state: FSMContext):
 # Ловим второй ответ
 # @dp.message_handler(state=FSMAdmin.description)
 async def load_description(message: types.Message, state: FSMContext):
-    if message.from_user.id == ADMIN_ID:
+    if message.from_user.id in ADMINS:
         async with state.proxy() as data:
             data['description'] = message.text
 
@@ -53,7 +53,7 @@ async def load_description(message: types.Message, state: FSMContext):
 # @dp.message_handler(state='*', commands='Отмена')
 # @dp.message_handler(Text(equals='отмена', ignore_case=True), state='*')
 async def cancel_handler(message: types.Message, state: FSMContext):
-    if message.from_user.id == ADMIN_ID:
+    if message.from_user.id in ADMINS:
         current_state = await state.get_state()
         if current_state is None:
             return
@@ -67,5 +67,5 @@ def register_handlers_admin(disp: Dispatcher):
     disp.register_message_handler(cm_start, commands=['Загрузить'], state=None)
     disp.register_message_handler(load_photo, content_types=['photo'], state=FSMAdmin.photo)
     disp.register_message_handler(load_description, state=FSMAdmin.description)
-    dp.register_message_handler(cancel_handler, state='*', commands='Отмена')
-    dp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state='*')
+    disp.register_message_handler(cancel_handler, state='*', commands='Отмена')
+    disp.register_message_handler(cancel_handler, Text(equals='отмена', ignore_case=True), state='*')
