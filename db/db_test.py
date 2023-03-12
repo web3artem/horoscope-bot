@@ -12,11 +12,11 @@ async def db_test():
     await db.gino.drop_all()  # Удаляем все таблицы
     await db.gino.create_all()
 
-    await commands.add_user(1, 'naruto', 'Artem', 'male', '08.05.1997', 'Gukovo', 'day')
-    await commands.add_user(2, 'saske', 'Oleg', 'male', '11.05.1997', 'Gukovo', 'day')
-    await commands.add_user(3, 'sakura', 'ANton', 'male', '12.05.1997', 'Gukovo', 'day')
-    await commands.add_user(4, 'gaara', 'Denis', 'male', '13.05.1997', 'Gukovo', 'day')
-    await commands.add_user(5, 'nedji', 'Artem', 'male', '08.05.1997', 'Gukovo', 'day')
+    await commands.add_user(1, 'ss', 'Artem', 'male', '08.05.1997', 'Gukovo', 'day')
+    await commands.add_user(2, 'ss', 'Oleg', 'male', '11.05.1997', 'Gukovo', 'day')
+    await commands.add_user(3, 'ss', 'ANton', 'male', '12.05.1997', 'Gukovo', 'day')
+    await commands.add_user(4, 'ss', 'Denis', 'male', '13.05.1997', 'Gukovo', 'day')
+    await commands.add_user(5, 'ss', 'Artem', 'male', '08.05.1997', 'Gukovo', 'day')
 
     users = await commands.select_all_users()
     print(users)

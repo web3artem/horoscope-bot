@@ -1,11 +1,14 @@
 from aiogram import executor
 
-from create_bot import dp
+from loader import dp
 from handlers import client, admin
 
 
 async def on_startup(_):
     print("Бот был запущен!")
+
+    from db.db_gino import on_startup
+    await on_startup(dp)
 
 
 client.register_handlers_client(dp)
