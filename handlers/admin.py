@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -7,7 +9,9 @@ from data.config import ADMINS
 from .admin_filters import IsAdmin
 from keyboards.admin_kb import admin_main_kb, admin_post_kb, admin_correct_kb, admin_change_kb
 from states.admin_states import FSMAdmin
-from db.schemas.user import User
+from db.schemas.user import User, Distribution
+from .client import logger
+from aiogram.utils.exceptions import BotBlocked
 
 
 # Здесь необходимо ввести айдишник для доступа к админке. Получить можно в тг боте https://t.me/getmyid_bot
@@ -64,10 +68,25 @@ async def summarize(callback_query: types.CallbackQuery, state: FSMContext):
                     continue
                 try:
                     await bot.send_photo(row.user_id, photo=data['photo'])
-                except KeyError:
-                    pass
+                except Exception as ex:
+                    if type(ex) == BotBlocked:
+                        await Distribution.delete.where(Distribution.id == row.user_id).gino.status()
+                        logger.info(
+                            f'Пользователь {row.user_id} - {row.username} был удален из базы по причине блокировки бота')
+                        await User.delete.where(User.user_id == row.user_id).gino.status()
+                    logger.error(f'Ошибка при отправке фото пользователю {row.user_id}: {ex}')
                 await callback_query.answer()
-                await bot.send_message(row.user_id, text=data['desc'])
+                try:
+                    await bot.send_message(row.user_id, text=data['desc'])
+                    await bot.send_message(callback_query.from_user.id, text="Пост был успешно отправлен")
+                except Exception as ex:
+                    if type(ex) == BotBlocked:
+                        await Distribution.delete.where(Distribution.id == callback_query.from_user.id).gino.status()
+                        await User.delete.where(User.user_id == callback_query.from_user.id).gino.status()
+                        logger.info(
+                            f'Пользователь {row.user_id} - {row.username} был удален из базы по причине блокировки бота')
+                    logger.error(f'Ошибка при отправке фото пользователю {row.user_id}: {ex}')
+
                 await state.finish()
     else:
         await callback_query.answer()

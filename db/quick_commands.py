@@ -7,6 +7,7 @@ from asyncpg import UniqueViolationError
 
 from db.db_gino import db
 from db.schemas.user import User, MessageId, Distribution
+from handlers.client import logger
 
 
 async def add_user(user_id: int, username: str, name: str,
@@ -42,11 +43,13 @@ async def update_info(user_id: int, old_field_name: string, new_field_name: stri
 
 
 async def delete_mess(message: types.Message | types.CallbackQuery):
-    return await MessageId.select('message_id').where(MessageId.user_id == message.from_user.id).gino.scalar()
+    try:
+        return await MessageId.select('message_id').where(MessageId.user_id == message.from_user.id).gino.scalar()
+    except Exception:
+        logger.error(f"Нет пользователя с id {message.from_user.id} в БД MessageId")
 
 
 # Сохранение id сообщения в БД
 async def save_message_id(message: types.Message | types.CallbackQuery, message_id: int):
     message = MessageId(user_id=message.from_user.id)
     await message.update(message_id=message_id).apply()
-

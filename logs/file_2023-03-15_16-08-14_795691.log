@@ -1,0 +1,28 @@
+2023-03-15 16:08:40.075 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
+2023-03-15 16:08:41.814 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:08:41.906 | ERROR    | handlers.client:change_info:332 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:08:45.227 | INFO     | handlers.client:what_to_change:367 - Пользователя 6083753042 - None
+2023-03-15 16:08:45.227 | INFO     | handlers.client:what_to_change:368 - Пользователь 6083753042 изменил данные
+2023-03-15 16:08:45.227 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.
+2023-03-15 16:08:50.947 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
+2023-03-15 16:08:52.121 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:08:52.191 | ERROR    | handlers.client:change_info:332 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:08:56.642 | INFO     | handlers.client:what_to_change:367 - Пользователя 6083753042 - None
+2023-03-15 16:08:56.642 | INFO     | handlers.client:what_to_change:368 - Пользователь 6083753042 изменил данные
+2023-03-15 16:08:56.642 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.
+2023-03-15 16:10:01.679 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
+2023-03-15 16:10:02.554 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:10:02.652 | ERROR    | handlers.client:change_info:332 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:10:03.821 | INFO     | handlers.client:change_daytime:383 - Пользователь 6083753042 изменил время получение гороскопа
+2023-03-15 16:10:03.821 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.
+2023-03-15 16:10:25.048 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
+2023-03-15 16:10:25.990 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:10:26.117 | ERROR    | handlers.client:change_info:332 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:10:27.224 | INFO     | handlers.client:change_daytime:383 - Пользователь 6083753042 изменил время получение гороскопа
+2023-03-15 16:10:27.225 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.
+2023-03-15 16:11:29.132 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
+2023-03-15 16:11:30.291 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:11:30.367 | ERROR    | handlers.client:change_info:332 - Пользователя 6083753042 нет в БД MessageId
+2023-03-15 16:11:33.363 | INFO     | handlers.client:what_to_change:367 - Пользователя 6083753042 - None
+2023-03-15 16:11:33.363 | INFO     | handlers.client:what_to_change:368 - Пользователь 6083753042 изменил данные
+2023-03-15 16:11:33.364 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.

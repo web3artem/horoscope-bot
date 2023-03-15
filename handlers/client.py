@@ -6,7 +6,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.types import CallbackQuery
-from aiogram.utils.exceptions import BotBlocked, MessageToDeleteNotFound
+from aiogram.utils.exceptions import BotBlocked, MessageToDeleteNotFound, MessageIdentifierNotSpecified
 from asyncpg import UniqueViolationError
 from loguru import logger
 
@@ -111,15 +111,14 @@ async def get_my_info(message: types.Message | CallbackQuery):
     data = await db.all(data)
 
     if data[0][5] == 'tomorrow':
-        time_preference = 'Утром'
-    else:
         time_preference = 'Вечером'
+    else:
+        time_preference = 'Утром'
 
     await message.answer(text=f'Имя: {data[0][0]}\n\n'
                               f'Пол: {data[0][1]}\n\n'
                               f'Дата рождения: {data[0][2]}\n\n'
                               f'Место рождения: {data[0][3]}\n\n'
-                              f'Время рождения: {data[0][4] if not None else "Не знаете"}\n\n'
                               f'Получать рассылку: {time_preference}\n\n'
                               f'Если какие-либо данные неправильные, то выполните команду /change')
 
@@ -172,13 +171,19 @@ async def gender_info(callback_query: CallbackQuery, state: FSMContext):
 async def check_birthdate(message: types.Message, state: FSMContext):
     await message.delete()
     if funcs.validate_birthdate(message.text):
-        await bot.delete_message(message.chat.id, await delete_mess(message))
+        try:
+            await bot.delete_message(message.chat.id, await delete_mess(message))
+        except Exception:
+            pass
         async with state.proxy() as data:
             data['birth_date'] = message.text
         await FSMClientRegistration.next()
         mes = await funcs.get_background_photo(message, 'media/backgrounds/birthplace-img.jpg',
                                                caption='Пожалуйста, введите место своего рождения')
-        await save_message_id(message, mes.message_id)
+        try:
+            await save_message_id(message, mes.message_id)
+        except Exception:
+            pass
     else:
         mes = await funcs.get_background_photo(message, 'media/backgrounds/birthdate-img.jpg',
                                                caption='Пожалуйста, введите дату своего рождения в формате 01.01.1111')
@@ -263,7 +268,6 @@ async def prepare_datas(callback_query: CallbackQuery, state: FSMContext):
                                           f'\nПол: {data["gender"]}'
                                           f'\nДата рождения: {data["birth_date"]}'
                                           f'\nМесто рождения: {data["birth_place"]}'
-                                          f'\nВремя рождения: {data["birth_time"]}'
                                           f'\nПолучать рассылку: {data["part_of_the_day"]}',
                                      reply_markup=agree_inline_kb)
         await save_message_id(callback_query, mes.message_id)
@@ -313,23 +317,27 @@ async def agree(callback_query: CallbackQuery, state: FSMContext):
 async def change_info(callback_query: CallbackQuery, state: FSMContext):
     try:
         await bot.delete_message(callback_query.message.chat.id, await delete_mess(callback_query))
-    except MessageToDeleteNotFound:
-        pass
+    except Exception as ex:
+        logger.error(f'Пользователя {callback_query.from_user.id} нет в БД MessageId')
     async with state.proxy() as data:
         data_to_change = callback_query.data.split('_')[1]
-        if data_to_change != 'receive':
-            await FSMClientRegistration.client_what_to_change.set()
-            if data_to_change == 'birthtime':
-                if funcs.validate_time(data_to_change):
-                    birthtime = data_to_change
-                else:
-                    birthtime = None
-            data['data_to_change'] = birthtime
-            mes = await bot.send_message(callback_query.message.chat.id,
-                                         text='Введите корректные данные 😌')
+        if data_to_change == 'name':
+            data['data_to_change'] = 'name'
+        if data_to_change == 'date':
+            data['data_to_change'] = 'date'
+        mes = await bot.send_message(callback_query.message.chat.id,
+                                     text='Введите корректные данные 😌')
+        await FSMClientRegistration.client_what_to_change.set()
+
+        try:
             await save_message_id(callback_query, mes.message_id)
-            await callback_query.answer()
-        else:
+        except Exception as ex:
+            logger.error(f'Пользователя {callback_query.from_user.id} нет в БД MessageId')
+
+        await callback_query.answer()
+
+        if data_to_change == 'receive':
+            data['data_to_change'] = 'receive'
             await FSMClientRegistration.client_daytime_change.set()
             with open('media/backgrounds/horoscope-time.jpg', 'rb') as photo:
                 await bot.send_photo(callback_query.message.chat.id,
@@ -340,11 +348,11 @@ async def change_info(callback_query: CallbackQuery, state: FSMContext):
 async def what_to_change(message: types.Message, state: FSMContext):
     try:
         await bot.delete_message(message.chat.id, await delete_mess(message))
-    except MessageToDeleteNotFound:
+    except Exception as ex:
         pass
-    await message.delete()
-    user = User(user_id=message.from_user.id)
+
     async with state.proxy() as data:
+        user = User(user_id=message.from_user.id)
         match data['data_to_change']:
             case 'name':
                 await user.update(name=message.text).apply()
@@ -358,7 +366,10 @@ async def what_to_change(message: types.Message, state: FSMContext):
                 await user.update(birth_time=datetime.strptime(message.text, '%H:%M').time()).apply()
         mes = await bot.send_message(message.from_user.id,
                                      text='Данные были успешно изменены 😄')
-        await save_message_id(message, mes.message_id)
+        try:
+            await save_message_id(message, mes.message_id)
+        except Exception:
+            logger.info(f'Пользователя {message.from_user.id} - {message.from_user.username}')
         logger.info(f'Пользователь {message.from_user.id} изменил данные')
         await state.finish()
         await send(message)
