@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import lxml
 
 from db.db_gino import db
-from db.schemas.user import User
+from db.schemas.user import User, Distribution
 from loader import bot
 
 
@@ -21,9 +21,9 @@ async def get_background_photo(message: types.Message | CallbackQuery,
     photo = InputFile(photo_path)
 
     if text is None:
-        await bot.send_photo(message.from_user.id, photo, caption=caption, reply_markup=reply_markup)
+        return await bot.send_photo(message.from_user.id, photo, caption=caption, reply_markup=reply_markup)
     else:
-        await bot.send_message(message.from_user.id, photo, text=text, reply_markup=reply_markup)
+        return await bot.send_message(message.from_user.id, photo, text=text, reply_markup=reply_markup)
 
 
 def validate_birthdate(birthdate: str):
@@ -43,8 +43,8 @@ def validate_time(time: str):
 
 
 # Функция для проверки существования пользователя в базе данных по user_id
-async def user_exists(user_id: int) -> bool:
-    query = User.query.where(User.user_id == user_id)
+async def user_exists(table_name: db, user_id: int) -> bool:
+    query = table_name.query.where(table_name.user_id == user_id)
     result = await db.scalar(query)
     return bool(result)
 
@@ -220,4 +220,11 @@ async def generate_horoscope_for_today(user_id: int, time_preference: str):
 async def prepare_data(user_id: int):
     data = await User.select('receive_day_period').where(User.user_id == user_id).gino.first()
     time_preference = data[0]
+    await Distribution.update.values(was_sent=True).where(Distribution.id == user_id).gino.status()
     await generate_horoscope_for_today(user_id, time_preference)
+
+
+def validate_str_len(msg: str, str_len: int):
+    if len(msg) > str_len:
+        return False
+    return True

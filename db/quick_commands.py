@@ -1,15 +1,17 @@
 import datetime
 import string
+from typing import Union
 
+from aiogram import types
 from asyncpg import UniqueViolationError
 
 from db.db_gino import db
-from db.schemas.user import User
+from db.schemas.user import User, MessageId, Distribution
 
 
 async def add_user(user_id: int, username: str, name: str,
                    gender: str, birthdate,
-                   birthplace: str, day_or_night: str, birthtime = None):
+                   birthplace: str, day_or_night: str, birthtime=None):
     try:
         user = User(user_id=user_id, username=username, name=name,
                     gender=gender, birth_date=birthdate, birth_place=birthplace,
@@ -34,6 +36,17 @@ async def select_user(user_id: int):
     return user
 
 
-async def update_info(user_id:int, old_field_name: string, new_field_name: string):
+async def update_info(user_id: int, old_field_name: string, new_field_name: string):
     user = await User.query.where(User.user_id == user_id).gino.first()
     print(user)
+
+
+async def delete_mess(message: types.Message | types.CallbackQuery):
+    return await MessageId.select('message_id').where(MessageId.user_id == message.from_user.id).gino.scalar()
+
+
+# Сохранение id сообщения в БД
+async def save_message_id(message: types.Message | types.CallbackQuery, message_id: int):
+    message = MessageId(user_id=message.from_user.id)
+    await message.update(message_id=message_id).apply()
+
