@@ -4,7 +4,7 @@ from aiogram import executor
 
 from handlers import client, admin
 from loader import dp
-from handlers.client import schedule
+from handlers.client import schedule_morning, schedule_tomorrow
 from handlers.admin_filters import IsAdmin
 
 
@@ -20,5 +20,6 @@ admin.register_handlers_admin(dp)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.create_task(schedule(10))
+    loop.create_task(schedule_morning(3))
+    loop.create_task(schedule_tomorrow(3))
     executor.start_polling(dp, skip_updates=True, on_startup=on_startup, loop=loop)

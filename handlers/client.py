@@ -41,37 +41,59 @@ async def start_command(message: types.Message):
 
 
 # Функция рассылки
-async def schedule(time_dilation: int):
+async def schedule_morning(time_dilation: int):
     now = datetime.now()
     await asyncio.sleep(time_dilation)
-
+    morning_list = await User.select('user_id').where(User.receive_day_period == 'morning').gino.all()
     counter = 0
 
     while True:
-        dist = await Distribution.select('id', 'was_sent').gino.all()
-
-        for user_id, flag in dist:
-            if counter == len(dist):
+        for item in morning_list:
+            if counter == len(morning_list):
                 counter = 0
                 await asyncio.sleep(3600)
 
-            if now.hour == 1 and await User.select('receive_day_period').where(
-                    User.user_id == user_id).gino.scalar() == 'morning':
-                await Distribution.update.values(was_sent=False).where(Distribution.id == user_id).gino.status()
+            if now.hour == 20 and await User.select('receive_day_period').where(
+                    User.user_id == item[0]).gino.scalar() == 'morning':
+                await Distribution.update.values(was_sent=False).where(Distribution.id == item[0]).gino.status()
 
-            if now.hour == 19 and await User.select('receive_day_period').where(
-                    User.user_id == user_id).gino.scalar() == 'tomorrow':
-                await Distribution.update.values(was_sent=False).where(Distribution.id == user_id).gino.status()
-
-            if not await Distribution.select('was_sent').where(Distribution.id == user_id).gino.scalar():
+            if not await Distribution.select('was_sent').where(Distribution.id == item[0]).gino.scalar():
                 # Обрабатываем, если бот заблочен
                 try:
-                    await funcs.prepare_data(user_id)
+                    await funcs.prepare_data(item[0])
                     counter += 1
                 except BotBlocked:
-                    logger.info(f'Пользователь {user_id} заблокировал бот.')
-                    await Distribution.delete.where(Distribution.id == user_id).gino.status()
-                    await User.delete.where(User.user_id == user_id).gino.status()
+                    logger.info(f'Пользователь {item[0]} заблокировал бот.')
+                    await Distribution.delete.where(Distribution.id == item[0]).gino.status()
+                    await User.delete.where(User.user_id == item[0]).gino.status()
+
+
+async def schedule_tomorrow(time_dilation: int):
+    now = datetime.now()
+    await asyncio.sleep(time_dilation)
+    tomorrow_list = await User.select('user_id').where(User.receive_day_period == 'tomorrow').gino.all()
+    print(tomorrow_list)
+    counter = 0
+
+    while True:
+        for item in tomorrow_list:
+            if counter == len(tomorrow_list):
+                counter = 0
+                await asyncio.sleep(3600)
+
+            if now.hour == 19 and await User.select('receive_day_period').where(
+                    User.user_id == item[0]).gino.scalar() == 'tomorrow':
+                await Distribution.update.values(was_sent=False).where(Distribution.id == item[0]).gino.status()
+
+            if not await Distribution.select('was_sent').where(Distribution.id == item[0]).gino.scalar():
+                # Обрабатываем, если бот заблочен
+                try:
+                    await funcs.prepare_data(item[0])
+                    counter += 1
+                except BotBlocked:
+                    logger.info(f'Пользователь {item[0]} заблокировал бот.')
+                    await Distribution.delete.where(Distribution.id == item[0]).gino.status()
+                    await User.delete.where(User.user_id == item[0]).gino.status()
 
 
 async def send(message: types.Message | CallbackQuery):

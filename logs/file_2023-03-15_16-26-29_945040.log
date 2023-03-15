@@ -1,3 +1,0 @@
-2023-03-15 16:26:31.986 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
-2023-03-15 16:26:32.977 | ERROR    | handlers.client:change_info:321 - Пользователя 6083753042 нет в БД MessageId
-2023-03-15 16:26:33.048 | ERROR    | handlers.client:change_info:335 - Пользователя 6083753042 нет в БД MessageId

@@ -1,6 +1,0 @@
-2023-03-15 16:16:09.436 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
-2023-03-15 16:16:10.936 | ERROR    | handlers.client:change_info:322 - Пользователя 6083753042 нет в БД MessageId
-2023-03-15 16:16:11.023 | ERROR    | handlers.client:change_info:333 - Пользователя 6083753042 нет в БД MessageId
-2023-03-15 16:16:13.794 | INFO     | handlers.client:what_to_change:370 - Пользователя 6083753042 - None
-2023-03-15 16:16:13.794 | INFO     | handlers.client:what_to_change:371 - Пользователь 6083753042 изменил данные
-2023-03-15 16:16:13.795 | INFO     | handlers.client:send:79 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.

@@ -1,3 +1,0 @@
-2023-03-15 15:53:50.077 | INFO     | handlers.client:start_command:32 - Пользователь 6083753042 - None уже зарегистрирован..
-2023-03-15 15:53:52.007 | INFO     | handlers.client:change:97 - Пользователь 6083753042 хочет изменить данные
-2023-03-15 15:53:53.043 | ERROR    | handlers.client:change_info:317 - Пользователя 6083753042 нет в БД MessageId
