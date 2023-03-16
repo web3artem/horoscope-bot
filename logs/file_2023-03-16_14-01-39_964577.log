@@ -1,0 +1,6 @@
+2023-03-16 14:02:29.693 | INFO     | handlers.client:send:56 - Пользователь 6083753042 - None запросил гороскоп с помощью /send.
+2023-03-16 14:03:09.477 | INFO     | handlers.client:change:74 - Пользователь 1590165003 хочет изменить данные
+2023-03-16 14:03:10.981 | ERROR    | handlers.client:change_info:298 - Пользователя 1590165003 нет в БД MessageId
+2023-03-16 14:03:11.052 | ERROR    | handlers.client:change_info:312 - Пользователя 1590165003 нет в БД MessageId
+2023-03-16 14:03:12.815 | INFO     | handlers.client:change_daytime:365 - Пользователь 1590165003 изменил время получение гороскопа
+2023-03-16 14:03:12.815 | INFO     | handlers.client:send:56 - Пользователь 1590165003 - artemcringe запросил гороскоп с помощью /send.

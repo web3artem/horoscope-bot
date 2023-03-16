@@ -120,6 +120,7 @@ async def change_desc(message: types.Message, state: FSMContext):
 
 def register_handlers_admin(disp: Dispatcher):
     disp.register_message_handler(admin_start, IsAdmin(), commands=['admin'])
+    # Отправление поста всем пользователям
     disp.register_message_handler(post_creation, IsAdmin(), Text(equals='Отправить пост'))
     disp.register_callback_query_handler(photo_for_post, IsAdmin(), state=FSMAdmin.AdminPhoto)
     disp.register_message_handler(photo_loading, IsAdmin(), content_types='photo', state=FSMAdmin.AdminPhotoLoading)
@@ -127,3 +128,6 @@ def register_handlers_admin(disp: Dispatcher):
     disp.register_callback_query_handler(summarize, IsAdmin(), state=FSMAdmin.AdminSummarize)
     disp.register_callback_query_handler(change, IsAdmin(), state=FSMAdmin.AdminChange)
     disp.register_message_handler(change_photo, IsAdmin(), content_types='photo', state=FSMAdmin.AdminChangePhoto)
+
+    # Отправка гороскопа на утро
+

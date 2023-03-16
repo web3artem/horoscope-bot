@@ -2,6 +2,7 @@ import datetime
 from datetime import timedelta
 
 import aiohttp
+from loguru import logger
 
 from aiogram import types
 from aiogram.types import InputFile, CallbackQuery
@@ -218,10 +219,12 @@ async def generate_horoscope_for_today(user_id: int, time_preference: str):
 
 # Отправляем готовый гороскоп (Шапка + body)
 async def prepare_data(user_id: int):
+    logger.info(f'Формируется гороскоп для пользователя {user_id}')
     data = await User.select('receive_day_period').where(User.user_id == user_id).gino.first()
     time_preference = data[0]
     await Distribution.update.values(was_sent=True).where(Distribution.id == user_id).gino.status()
     await generate_horoscope_for_today(user_id, time_preference)
+    logger.info(f'Гороскоп был отправлен пользователю {user_id}')
 
 
 def validate_str_len(msg: str, str_len: int):

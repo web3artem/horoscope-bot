@@ -8,7 +8,7 @@ load_dotenv()
 API_TOKEN = os.getenv("API_TOKEN")
 
 # Список администраторов
-ADMINS = [6083753042, 645837666, 6083753042]
+ADMINS = [6083753042, 645837666, 1590165003]
 
 # БД
 ip = os.getenv('ip')

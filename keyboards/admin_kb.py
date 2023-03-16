@@ -2,13 +2,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeybo
 
 admin_main_kb = ReplyKeyboardMarkup([
     [KeyboardButton(text='Отправить пост'), KeyboardButton(text='Добавить администратора')],
-    [KeyboardButton(text='Забанить пользователя')]], resize_keyboard=True, one_time_keyboard=True)
-
+    [KeyboardButton(text='Отправить гороскоп на утро'), KeyboardButton(text='Отправить гороскоп на вечер')]],
+    resize_keyboard=True, one_time_keyboard=True)
 
 admin_photo_yes_b1 = InlineKeyboardButton(text='Да ✅', callback_data='photo_yes')
 admin_photo_no_b2 = InlineKeyboardButton(text='Нет ❌', callback_data='photo_no')
 admin_post_kb = InlineKeyboardMarkup().add(admin_photo_yes_b1, admin_photo_no_b2)
-
 
 admin_correct_yes_b1 = InlineKeyboardButton(text='Да ✅', callback_data='correct_yes')
 admin_correct_no_b2 = InlineKeyboardButton(text='Нет ❌', callback_data='correct_no')
